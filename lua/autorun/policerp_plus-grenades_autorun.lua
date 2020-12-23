@@ -1,9 +1,9 @@
 game.AddAmmoType( {
-	name = "flashbang",
+	name = "prp_flashbang",
 	dmgtype = DMG_BULLET
 } )
 
 game.AddAmmoType( {
-	name = "smoke",
+	name = "prp_smoke",
 	dmgtype = DMG_BULLET
 } )
