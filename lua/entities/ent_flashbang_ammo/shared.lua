@@ -1,6 +1,6 @@
 ENT.Type = "anim"
 ENT.Base = "base_anim"
-ENT.PrintName = "Flashbang Grenade"
+ENT.PrintName = "Flashbang"
 ENT.Category = "PoliceRP Plus"
 
 ENT.Spawnable		= true
