@@ -13,7 +13,7 @@ SWEP.AutoSwitchFrom		= true
 SWEP.DrawCrosshair		= false
 
 SWEP.Primary.ClipSize 			= 1
-SWEP.Primary.DefaultClip 		= 1
+SWEP.Primary.DefaultClip 		= 5
 SWEP.Primary.Automatic 			= false
 SWEP.Primary.Delay = 1.0
 SWEP.Primary.Ammo		= "none"
