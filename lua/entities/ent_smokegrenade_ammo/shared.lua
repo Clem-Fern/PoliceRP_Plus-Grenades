@@ -52,7 +52,11 @@ end
 
 function ENT:Use(activator, caller)
 	if (activator:IsPlayer()) and not self.Planted then
-		activator:GiveAmmo(5, "smoke")
+		if(!activator:HasWeapon("wep_smokegrenade")) then
+			activator:Give("wep_smokegrenade")
+		else
+			activator:GiveAmmo(5, "prp_smoke")
+		end
 		self.Entity:Remove()
 	end
 end

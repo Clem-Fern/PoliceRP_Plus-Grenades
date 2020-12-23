@@ -52,7 +52,11 @@ end
 
 function ENT:Use(activator, caller)
 	if (activator:IsPlayer()) and not self.Planted then
-		activator:GiveAmmo(5, "flashbang")
+		if(!activator:HasWeapon("wep_flashbang")) then
+			activator:Give("wep_flashbang")
+		else
+			activator:GiveAmmo(5, "prp_flashbang")
+		end
 		self.Entity:Remove()
 	end
 end
