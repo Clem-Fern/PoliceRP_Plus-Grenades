@@ -14,6 +14,8 @@ SWEP.Category = "PoliceRP Plus"
 
 SWEP.Grenade = "ent_flashbang_proj"
 
+SWEP.Primary.Ammo = "prp_flashbang"
+
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = true
 

@@ -14,6 +14,8 @@ SWEP.Category = "PoliceRP Plus"
 
 SWEP.Grenade = "ent_smokegrenade_proj"
 
+SWEP.Primary.Ammo = "prp_smoke"
+
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = true
 
