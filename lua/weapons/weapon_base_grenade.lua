@@ -12,11 +12,12 @@ SWEP.AutoSwitchFrom		= true
 
 SWEP.DrawCrosshair		= false
 
-SWEP.Primary.ClipSize		= -1
-SWEP.Primary.DefaultClip	= -1
-SWEP.Primary.Automatic		= false
+SWEP.Primary.ClipSize 			= 1
+SWEP.Primary.DefaultClip 		= 1
+SWEP.Primary.Automatic 			= false
 SWEP.Primary.Delay = 1.0
 SWEP.Primary.Ammo		= "none"
+
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= false
@@ -38,14 +39,18 @@ function SWEP:SetupDataTables()
    self:NetworkVar("Int", 0, "ThrowTime")
 end
 
+// primary
 function SWEP:PrimaryAttack()
+   if !self:CanPrimaryAttack() then return; end
    self:SetNextPrimaryFire(CurTime() + self.Primary.Delay)
    self:PullPin()
 end
 
+// secondary
 function SWEP:SecondaryAttack()
 end
 
+//
 function SWEP:PullPin()
    if self:GetPin() then return end
 
@@ -67,6 +72,12 @@ function SWEP:Think()
    local ply = self:GetOwner()
    if not IsValid(ply) then return end
 
+	if ((self:Clip1() > 0)) then // do not draw model if no ammo
+      self.Owner:DrawViewModel(true)
+	else
+		self.Owner:DrawViewModel(false)
+	end
+
    -- pin pulled and attack loose = throw
    if self:GetPin() then
       -- we will throw now
@@ -79,36 +90,16 @@ function SWEP:Think()
          if SERVER then
             self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
          end
-      else
-         -- still cooking it, see if our time is up
-         if SERVER and self:GetDetTime() < CurTime() then
-            self:BlowInFace()
-         end
       end
    elseif self:GetThrowTime() > 0 and self:GetThrowTime() < CurTime() then
       self:Throw()
    end
 end
 
-
-function SWEP:BlowInFace()
-   local ply = self:GetOwner()
-   if not IsValid(ply) then return end
-
-   if self.was_thrown then return end
-
-   self.was_thrown = true
-
-   -- drop the grenade so it can immediately explode
-
-   local ang = ply:GetAngles()
-   local src = ply:GetPos() + (ply:Crouching() and ply:GetViewOffsetDucked() or ply:GetViewOffset())
-   src = src + (ang:Right() * 10)
-
-   self:CreateGrenade(src, Angle(0,0,0), Vector(0,0,1), Vector(0,0,1), ply)
-
-   self:SetThrowTime(0)
-   self:Remove()
+// Reload
+function SWEP:Reload()
+	self.Owner:DrawViewModel(true)
+	self.Weapon:DefaultReload(ACT_VM_DRAW)
 end
 
 function SWEP:StartThrow()
@@ -143,7 +134,9 @@ function SWEP:Throw()
       self:CreateGrenade(src, Angle(0,0,0), thr, Vector(600, math.random(-1200, 1200), 0), ply)
 
       self:SetThrowTime(0)
-      self:Remove()
+      self:TakePrimaryAmmo(1)
+      self.was_thrown = false
+
    end
 end
 
@@ -181,14 +174,6 @@ function SWEP:CreateGrenade(src, ang, vel, angimp, ply)
    return gren
 end
 
-function SWEP:PreDrop()
-   -- if owner dies or drops us while the pin has been pulled, create the armed
-   -- grenade anyway
-   if self:GetPin() then
-      self:BlowInFace()
-   end
-end
-
 function SWEP:Deploy()
 
    if self.SetHoldType then
@@ -197,21 +182,21 @@ function SWEP:Deploy()
 
    self:SetThrowTime(0)
    self:SetPin(false)
-   return true
+
+	if (self:Clip1() > 0) then
+		self.Weapon:SendWeaponAnim(ACT_VM_DRAW)
+		self.Owner:DrawViewModel(true)
+	else
+		self.Owner:DrawViewModel(false)
+	end
+
+	return true
 end
 
 function SWEP:Holster()
-   if self:GetPin() then
-      return false -- no switching after pulling pin
-   end
-
    self:SetThrowTime(0)
    self:SetPin(false)
    return true
-end
-
-function SWEP:Reload()
-   return false
 end
 
 function SWEP:Initialize()
